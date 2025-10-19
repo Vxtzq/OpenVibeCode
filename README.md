@@ -39,7 +39,7 @@ Empower your ideas, streamline web development, and keep full control over your 
 ## Run
 
 
-```python app.py"```
+```python app.py```
 
 or if more control is wanted
 
