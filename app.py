@@ -39,6 +39,14 @@ logging.basicConfig(level=logging.INFO)
 # ----------------------------
 app.logger.info(f"Loading model: {MODEL_NAME}")
 
+
+
+# ----------------------------
+# Routes
+# ----------------------------
+@app.route("/")
+def index():
+    return render_template("index.html")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
@@ -51,14 +59,6 @@ model = AutoModelForCausalLM.from_pretrained(
         "bnb_4bit_compute_dtype": torch.float16
     }
 )
-
-# ----------------------------
-# Routes
-# ----------------------------
-@app.route("/")
-def index():
-    return render_template("index.html")
-
 # ----------------------------
 # Generation helper
 # ----------------------------
