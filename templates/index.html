@@ -1,455 +1,490 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOIR - Fashion Forward</title>
-    <link rel="stylesheet" href="templatemo-noir-fashion.css">
-<!-- 
-TemplateMo 599 Noir Fashion
-https://templatemo.com/tm-599-noir-fashion
--->
-</head>
-<body>
-    <nav id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="logo-link">
-                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#ff3366;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <polygon points="50,10 20,50 50,90 80,50" fill="none" stroke="url(#logoGrad)" stroke-width="3"/>
-                    <circle cx="50" cy="50" r="5" fill="url(#logoGrad)"/>
-                </svg>
-                <span class="logo-text">NOIR</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="#home" class="nav-link active">Home</a></li>
-                <li><a href="#collections" class="nav-link">Collections</a></li>
-                <li><a href="#featured" class="nav-link">Featured</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-                <li><a href="#contact" class="nav-cta">Get In Touch</a></li>
-            </ul>
-            <div class="menu-toggle" id="menuToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OpenVibeCode — Prompt / Raw HTML Preview</title>
 
-    <div class="mobile-nav" id="mobileNav">
-        <ul class="mobile-nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#collections">Collections</a></li>
-            <li><a href="#featured">Featured</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=terminal" />
+
+<style>
+  :root{
+    --dark-bg:#0A0F1D;
+    --electric-blue:#4A90E2;
+    --teal:#00C9B2;
+    --magenta:#FF6B6B;
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.10);
+    --radius:14px;
+    --gap:16px;
+    --transition: all 0.28s cubic-bezier(0.16,0.86,0.44,1.08);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #071022;
+    color:#edf7ff;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* background layers (same as before) */
+  .bg-layers{ position:fixed; inset:0; z-index:-3; pointer-events:none; }
+  .bg-layers .layer{ position:absolute; filter: blur(92px); mix-blend-mode:screen; opacity:0.95; }
+  .bg-layers .g1{ left:-12%; top:-18%; width:70%; height:70%; background: radial-gradient(circle at 30% 30%, var(--electric-blue) 0%, rgba(74,144,226,0.75) 18%, transparent 60%); transform:scale(1.08); }
+  .bg-layers .g2{ right:-8%; top:18%; width:68%; height:72%; background: radial-gradient(circle at 70% 40%, var(--teal) 0%, rgba(0,201,178,0.78) 18%, transparent 65%); transform:scale(1.03); }
+  .bg-layers .g3{ left:8%; bottom:-22%; width:70%; height:70%; background: radial-gradient(circle at 40% 80%, var(--magenta) 0%, rgba(255,107,107,0.8) 16%, transparent 62%); transform:scale(1.04); }
+
+  .floating-lights{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
+  .light{ position:absolute; width:8px; height:8px; border-radius:50%; background:var(--magenta); opacity:0.8; filter: blur(0.3px); animation: float 28s infinite ease-in-out; }
+  @keyframes float { 0%{transform:translateY(0)}50%{transform:translateY(-28px)}100%{transform:translateY(0)} }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:var(--gap);
+    padding:14px 20px; z-index:2; position:relative;
+    backdrop-filter: blur(8px);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .brand{ display:flex; gap:12px; align-items:center; }
+  .logo{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--electric-blue),var(--teal)); box-shadow:0 8px 24px rgba(74,144,226,0.16); }
+  .title{ font-weight:700; font-size:1rem }
+  .meta{ color:#bcd9f8; font-size:0.85rem }
+  .links a{ color:#eaf6ff; text-decoration:none; padding:8px 12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02) }
+  .links a:hover{ transform:translateY(-3px); box-shadow:0 6px 20px rgba(74,144,226,0.08) }
+
+  /* main must participate in height chain */
+  main{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:26px;
+    padding:26px;
+    width:100%;
+    max-width:100%;
+    margin:0 auto;
+    flex:1 1 auto;     /* important so main grows */
+    min-height:0;      /* allow children to shrink correctly */
+  }
+
+  .panel{ background:var(--glass-bg); border-radius:14px; border:1px solid var(--glass-border); padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow: 0 12px 32px rgba(2,6,20,0.6); min-height:0; }
+  label{ color:#cfe7ff; font-weight:600 }
+  .controls-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+  .segmented{ display:inline-flex; background:rgba(255,255,255,0.02); border-radius:10px; padding:4px; border:1px solid rgba(255,255,255,0.03); }
+  .segmented button{ background:transparent; color:#dff2ff; border:0; padding:8px 12px; cursor:pointer; border-radius:8px; font-weight:600; }
+  .segmented button.active{ background: linear-gradient(90deg,var(--electric-blue),var(--teal)); box-shadow:0 8px 22px rgba(74,144,226,0.16); color:white; }
+
+  /* generic textarea styling (no height) */
+  textarea {
+    width:100%;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color:#eaf4ff;
+    padding:12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;
+    font-size:14px;
+    line-height:1.6;
+    resize: vertical;
+    min-height: 64px;
+    overflow:auto;
+  }
+
+  /* both textareas should have exactly same properties and stretch the same */
+  .editor-textarea {
+    flex: 1 1 auto;   /* stretch to fill available space */
+    min-height: 0;    /* allow flexbox to control height */
+    resize: vertical;
+    overflow:auto;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* small differences: visual min sizes */
+  #promptEditor { min-height:36vh; }
+  #htmlInput   { min-height:36vh; } /* match promptEditor exactly */
+
+  .hidden { display:none !important; }
+
+  .small{ font-size:0.85rem; color:#9fb7d9 }
+
+  /* preview column participates in height chain */
+  .preview-panel { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+
+  /* ensure the inner .panel inside preview stretches fully */
+  .preview-panel > .panel { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; padding:10px; }
+
+  .preview-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 6px; }
+  .preview-actions{ display:flex; gap:8px; align-items:center }
+  .btn{ border:0; padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer; }
+  .btn.primary{ background:linear-gradient(90deg,var(--electric-blue),var(--teal)); color:white; box-shadow:0 10px 30px rgba(74,144,226,0.14) }
+  .btn.ghost{ background:transparent; color:#d6efff; border:1px solid rgba(255,255,255,0.03) }
+
+  /* iframe wrapper must stretch and allow iframe to fill */
+  .iframe-wrap {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden; /* avoid double scrollbars */
+  }
+
+  .iframe-wrap.generating iframe { filter: blur(6px) brightness(0.9); transform: scale(0.995); pointer-events: none; transition: filter 0.28s ease, transform 0.28s ease; }
+  .generating-overlay{ display:none; position:absolute; inset:10px; border-radius:10px; z-index:8; background: linear-gradient(180deg, rgba(10,16,25,0.55), rgba(4,8,12,0.55)); backdrop-filter: blur(4px); align-items:center; justify-content:center; }
+  .iframe-wrap.generating .generating-overlay{ display:flex; pointer-events:auto; }
+
+  .gen-spinner {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(74, 144, 226, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.gen-spinner::before,
+.gen-spinner::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  border-top-color: var(--electric-blue);
+  border-bottom-color: var(--teal);
+}
+
+.gen-spinner::before {
+  width: 100%;
+  height: 100%;
+  animation: spin 1.2s linear infinite;
+}
+
+.gen-spinner::after {
+  width: 70%;
+  height: 70%;
+  animation: spin 0.8s linear reverse infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  .gen-label{ margin-top:12px;color:#d6efff;font-weight:600;font-size:14px;text-align:center;opacity:0.95; }
+
+  /* iframe stretches to fill the iframe-wrap */
+  iframe#preview {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(2,6,20,0.6);
+  }
+
+  @media (max-width:960px){
+    main{ grid-template-columns: 1fr; padding:18px; }
+    #promptEditor{ min-height:40vh }
+    #htmlInput{ min-height:40vh }
+    .iframe-wrap{ height:44vh }
+  }
+  
+  .generating-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0 */
+  border-radius: 10px;
+  z-index: 8;
+  background: linear-gradient(180deg, rgba(10,16,25,0.55), rgba(4,8,12,0.55));
+  backdrop-filter: blur(4px);
+
+            /* flex centering */
+  align-items: center;    /* vertical center */
+  justify-content: center;/* horizontal center */
+}
+.generating-overlay > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+  .logo { display:flex; align-items:center; justify-content:center; width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--electric-blue),var(--teal)); color:#fff; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48; }
+</style>
+</head>
+<body class="multi-gradient">
+
+  <div class="bg-layers" aria-hidden="true">
+    <div class="layer g1"></div>
+    <div class="layer g2"></div>
+    <div class="layer g3"></div>
+  </div>
+
+  <div class="floating-lights" aria-hidden="true">
+    <div class="light" style="top:12%; left:8%;"></div>
+    <div class="light" style="top:28%; left:44%;"></div>
+    <div class="light" style="top:62%; left:72%;"></div>
+    <div class="light" style="top:22%; left:84%;"></div>
+    <div class="light" style="top:52%; left:18%;"></div>
+    <div class="light" style="top:78%; left:56%;"></div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <div class="logo">
+        <span class="material-symbols-outlined">terminal</span>
+      </div>
+      <div>
+        <div class="title">OpenVibeCode</div>
+        <div class="meta">AI-Powered Web Generation — Preview editor</div>
+      </div>
     </div>
 
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="hero-container">
-            <div class="hero-left">
-                <div class="hero-badge">New Collection 2025</div>
-                <h1 class="hero-title">
-                    <span class="line"><span>Redefine</span></span>
-                    <span class="line"><span>Your <span class="accent">Style</span></span></span>
-                    <span class="line"><span>Revolution</span></span>
-                </h1>
-                <p class="hero-description">
-                    Discover our avant-garde collection where high fashion meets street culture. 
-                    Each piece tells a story of rebellion, elegance, and innovation.
-                </p>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Exclusive Pieces</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">48H</span>
-                        <span class="stat-label">Fast Delivery</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">100%</span>
-                        <span class="stat-label">Sustainable</span>
-                    </div>
-                </div>
-                <div class="cta-group">
-                    <a href="#collections" class="cta-button primary">Explore Collection</a>
-                    <a href="#featured" class="cta-button outline">Watch Runway</a>
-                </div>
-            </div>
-            <div class="hero-right">
-                <div class="hero-image-wrapper">
-                    <div class="hero-carousel">
-                        <div class="carousel-slide active">
-                            <img src="images/noir-fashion-hero-01.avif" alt="Fashion Model 1">
-                        </div>
-                        <div class="carousel-slide">
-                            <img src="images/noir-fashion-hero-02.avif" alt="Fashion Model 2">
-                        </div>
-                        <div class="carousel-slide">
-                            <img src="images/noir-fashion-hero-03.avif" alt="Fashion Model 3">
-                        </div>
-                        <div class="carousel-overlay"></div>
-                        <div class="carousel-indicators">
-                            <span class="indicator active" data-slide="0"></span>
-                            <span class="indicator" data-slide="1"></span>
-                            <span class="indicator" data-slide="2"></span>
-                        </div>
-                    </div>
-                    <div class="floating-tags">
-                        <div class="tag">Limited Edition</div>
-                        <div class="tag">Handcrafted</div>
-                        <div class="tag">Premium Quality</div>
-                    </div>
-                </div>
-            </div>
+    <div class="links">
+      <a href="https://github.com/Vxtzq/OpenVibeCode" target="_blank" rel="noopener"><i class="fab fa-github"></i>&nbsp;GitHub</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- editor panel -->
+    <section class="panel editor-panel" aria-labelledby="editor-label">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div>
+          <label id="editor-label">Prompt / Raw HTML</label>
+          <div class="small">Switch between Prompt and Raw HTML. Only the corresponding editor appears.</div>
         </div>
-        <div class="scroll-indicator">
-            <span></span>
+
+        <div class="controls-row">
+          <div class="segmented" role="tablist" aria-label="mode">
+            <button id="mode-prompt" class="active" role="tab" aria-selected="true">Prompt</button>
+            <button id="mode-raw" role="tab" aria-selected="false">Raw HTML</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Prompt textarea (visible in Prompt mode) -->
+      <textarea id="promptEditor" class="editor-textarea" spellcheck="false" placeholder="Write a natural-language prompt (what you want: layout, sections, colors, components...)."></textarea>
+
+      <!-- Raw HTML textarea (visible in Raw HTML mode) -->
+      <textarea id="htmlInput" class="editor-textarea hidden" spellcheck="false" placeholder="Edit or paste raw HTML here. When in Prompt mode, generated HTML will be placed here (even if hidden)"></textarea>
+
+      <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
+        <div style="display:flex; gap:8px;">
+          <button id="generateBtn" class="btn primary" title="Generate HTML"><i class="fa fa-rocket"></i>&nbsp;Generate</button>
+          <button id="sampleBtn" class="btn ghost" title="Insert a sample prompt/html">Sample</button>
+          <button id="clearBtn" class="btn ghost">Clear</button>
+        </div>
+        <div class="small">Prompt and Raw HTML are independent. Generation writes HTML into the Raw HTML editor.</div>
+      </div>
     </section>
 
-    <section class="collections" id="collections">
-        <div class="section-header">
-            <h2 class="section-title">Latest Collections</h2>
-            <p class="section-subtitle">Discover our curated selection</p>
-        </div>
-        
-        <div class="category-tabs">
-            <button class="tab-btn active" data-category="all">All</button>
-            <button class="tab-btn" data-category="women">Women</button>
-            <button class="tab-btn" data-category="men">Men</button>
-            <button class="tab-btn" data-category="accessories">Accessories</button>
-            <button class="tab-btn" data-category="limited">Limited Edition</button>
+    <!-- preview panel -->
+    <aside class="preview-panel">
+      <div class="panel">
+        <div class="preview-top">
+          <div><strong>Live Preview</strong></div>
+          <div class="preview-actions">
+            <button id="download" class="btn primary" title="Download the currently rendered HTML"><i class="fa fa-download"></i>&nbsp;Download</button>
+            <button id="openNew" class="btn ghost" title="Open preview in new tab"><i class="fa fa-external-link-alt"></i>&nbsp;Open</button>
+          </div>
         </div>
 
-        <div class="grid" id="collectionsGrid">
-            <div class="collection-card" data-category="women">
-                <div class="collection-thumbnail">
-                    <img src="images/urban-edge.avif" alt="Urban Edge Women's Collection">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">New Arrival</span>
-                    <h3 class="card-title">Urban Edge</h3>
-                    <p class="card-subtitle">Women's Collection</p>
-                    <p class="card-price">From $299</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="limited">
-                <div class="collection-thumbnail">
-                    <img src="images/midnight-luxe.avif" alt="Midnight Luxe Limited Edition">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Limited</span>
-                    <h3 class="card-title">Midnight Luxe</h3>
-                    <p class="card-subtitle">Exclusive Drop</p>
-                    <p class="card-price">From $899</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="men">
-                <div class="collection-thumbnail">
-                    <img src="images/neo-classic.avif" alt="Neo Classic Men's Essentials">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Bestseller</span>
-                    <h3 class="card-title">Neo Classic</h3>
-                    <p class="card-subtitle">Men's Essentials</p>
-                    <p class="card-price">From $399</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="accessories">
-                <div class="collection-thumbnail">
-                    <img src="images/accent-pieces.avif" alt="Accent Pieces Accessories">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Trending</span>
-                    <h3 class="card-title">Accent Pieces</h3>
-                    <p class="card-subtitle">Accessories</p>
-                    <p class="card-price">From $149</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="women">
-                <div class="collection-thumbnail">
-                    <img src="images/spring-bloom.avif" alt="Spring Bloom Women's Spring">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Pre-Order</span>
-                    <h3 class="card-title">Spring Bloom</h3>
-                    <p class="card-subtitle">Women's Spring</p>
-                    <p class="card-price">From $249</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="men">
-                <div class="collection-thumbnail">
-                    <img src="images/street-rebel.avif" alt="Street Rebel Men's Streetwear">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Hot</span>
-                    <h3 class="card-title">Street Rebel</h3>
-                    <p class="card-subtitle">Men's Streetwear</p>
-                    <p class="card-price">From $199</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="limited">
-                <div class="collection-thumbnail">
-                    <img src="images/avant-garde.avif" alt="Avant Garde Art Meets Fashion">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Exclusive</span>
-                    <h3 class="card-title">Avant Garde</h3>
-                    <p class="card-subtitle">Art Meets Fashion</p>
-                    <p class="card-price">From $1,299</p>
-                </div>
-            </div>
-            <div class="collection-card" data-category="accessories">
-                <div class="collection-thumbnail">
-                    <img src="images/minimal-chic.avif" alt="Minimal Chic Timeless Accessories">
-                </div>
-                <div class="card-content">
-                    <span class="card-badge">Essentials</span>
-                    <h3 class="card-title">Minimal Chic</h3>
-                    <p class="card-subtitle">Timeless Accessories</p>
-                    <p class="card-price">From $89</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <div class="iframe-wrap" role="region" aria-live="polite">
+          <iframe id="preview" sandbox="allow-forms allow-pointer-lock allow-scripts"></iframe>
 
-    <section class="featured" id="featured">
-        <div class="featured-container">
-            <div class="featured-hero">
-                <div class="featured-content">
-                    <span class="label">Crafted with Passion</span>
-                    <h2>The Art of Fashion</h2>
-                    <p>Where tradition meets innovation. Our master craftsmen blend centuries-old techniques with cutting-edge design to create pieces that transcend time and trends. This template is proudly crafted by TemplateMo, featuring beautiful imagery from Unsplash.</p>
-                    
-                    <div class="feature-highlights">
-                        <div class="highlight-item">
-                            <div class="highlight-icon">👑</div>
-                            <div class="highlight-title">Premium Quality</div>
-                            <div class="highlight-desc">Only the finest materials and fabrics make it into our collections</div>
-                        </div>
-                        <div class="highlight-item">
-                            <div class="highlight-icon">🌱</div>
-                            <div class="highlight-title">Sustainable</div>
-                            <div class="highlight-desc">Ethically sourced materials with carbon-neutral production</div>
-                        </div>
-                        <div class="highlight-item">
-                            <div class="highlight-icon">✨</div>
-                            <div class="highlight-title">Handcrafted</div>
-                            <div class="highlight-desc">Each piece is carefully crafted by skilled artisans</div>
-                        </div>
-                    </div>
-                    
-                    <a href="#collections" class="feature-cta">Discover Our Craft</a>
-                </div>
-                
-                <div class="featured-image-section">
-                    <div class="featured-image-grid">
-                        <div class="featured-img">
-                            <img src="images/art-of-fashion-01.avif" alt="Fashion Collection Showcase">
-                        </div>
-                        <div class="featured-img">
-                            <img src="images/art-of-fashion-02.avif" alt="Luxury Fashion Details">
-                        </div>
-                        <div class="featured-img">
-                            <img src="images/art-of-fashion-03.avif" alt="Artisan Craftsmanship">
-                        </div>
-                    </div>
-                </div>
+          <!-- generating overlay -->
+          <div class="generating-overlay" aria-hidden="true">
+            <div style="text-align:center">
+              <div class="gen-spinner" aria-hidden="true"></div>
+              <div class="gen-label">Generating… your vibe</div>
             </div>
-            
-            <div class="testimonials">
-                <div class="testimonials-header">
-                    <h3>What Our Customers Say</h3>
-                    <p class="section-subtitle">Real stories from fashion enthusiasts</p>
-                </div>
-                
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <div class="testimonial-quote">
-                            "NOIR has completely transformed my wardrobe. The quality and attention to detail is unmatched. Every piece feels like a work of art."
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">S</div>
-                            <div class="author-info">
-                                <h4>Sarah Chen</h4>
-                                <p>Fashion Blogger</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <div class="testimonial-quote">
-                            "The sustainable approach combined with luxury design is exactly what I was looking for. NOIR proves you don't have to compromise."
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">M</div>
-                            <div class="author-info">
-                                <h4>Marcus Rodriguez</h4>
-                                <p>Creative Director</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <div class="testimonial-quote">
-                            "I've been a customer for three years now, and each collection keeps exceeding my expectations. The fit and quality are consistently outstanding."
-                        </div>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">A</div>
-                            <div class="author-info">
-                                <h4>Alexandra Kim</h4>
-                                <p>Entrepreneur</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </aside>
+  </main>
 
-    <section class="contact" id="contact">
-        <div class="contact-container">
-            <div class="contact-header">
-                <h2 class="section-title">Get In Touch</h2>
-                <p class="section-subtitle">We'd love to hear from you</p>
-            </div>
-            
-            <div class="contact-content">
-                <div class="contact-form-wrapper">
-                    <form id="contactForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" name="firstName" placeholder="John" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" name="lastName" placeholder="Doe" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="john@example.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" name="subject" placeholder="How can we help?" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" placeholder="Tell us more about your inquiry..." required></textarea>
-                        </div>
-                        <button type="submit" class="form-submit">Send Message</button>
-                    </form>
-                </div>
-                
-                <div class="contact-info">
-                    <div class="info-item">
-                        <div class="info-icon">📍</div>
-                        <div class="info-content">
-                            <h3>Visit Our Flagship Store</h3>
-                            <p>123 Fashion Avenue<br>
-                            Bangkok, Thailand 10110<br>
-                            Siam District</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon">📞</div>
-                        <div class="info-content">
-                            <h3>Call Us</h3>
-                            <p>Main: <a href="tel:+66021234567">+66 02 123 4567</a><br>
-                            Support: <a href="tel:+66021234568">+66 02 123 4568</a><br>
-                            Mon-Fri, 9AM-6PM ICT</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon">✉️</div>
-                        <div class="info-content">
-                            <h3>Email Us</h3>
-                            <p>General: <a href="mailto:hello@noir.fashion">hello@noir.fashion</a><br>
-                            Support: <a href="mailto:support@noir.fashion">support@noir.fashion</a><br>
-                            Press: <a href="mailto:press@noir.fashion">press@noir.fashion</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="map-section">
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.551370220076!2d100.53515!3d13.730314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2993fa2f8c6d9%3A0x92cf0e47c4c2ed08!2sSilom%20MRT%20Station!5e0!3m2!1sen!2sth!4v1697000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ===== behavior script (keeps same IDs) ===== -->
+<script>
+(function(){
+  const promptEditor = document.getElementById('promptEditor');
+  const htmlInput = document.getElementById('htmlInput');
+  const preview = document.getElementById('preview');
+  const iframeWrap = document.querySelector('.iframe-wrap');
+  const downloadBtn = document.getElementById('download');
+  const openNewBtn = document.getElementById('openNew');
+  const genBtn = document.getElementById('generateBtn');
+  const sampleBtn = document.getElementById('sampleBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const modePromptBtn = document.getElementById('mode-prompt');
+  const modeRawBtn = document.getElementById('mode-raw');
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <h3>NOIR</h3>
-                <p>Redefining fashion with bold designs, sustainable practices, and uncompromising quality. Join us in creating the future of style.</p>
-                <div class="social-links">
-                    <a href="#" class="social-link">f</a>
-                    <a href="#" class="social-link">t</a>
-                    <a href="#" class="social-link">i</a>
-                    <a href="#" class="social-link">p</a>
-                </div>
-            </div>
-            <div class="footer-column">
-                <h4>Shop</h4>
-                <ul>
-                    <li><a href="#">New Arrivals</a></li>
-                    <li><a href="#">Women</a></li>
-                    <li><a href="#">Men</a></li>
-                    <li><a href="#">Accessories</a></li>
-                    <li><a href="#">Sale</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Size Guide</a></li>
-                    <li><a href="#">Shipping Info</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
-                    <li><a href="#">Sustainability</a></li>
-                    <li><a href="#">Terms</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 NOIR. All rights reserved. | Designed by <a href="https://templatemo.com" target="_blank" rel="nofollow" style="color: var(--accent); text-decoration: none;">TemplateMo</a></p>
-            <div class="payment-methods">
-                <div class="payment-icon">VISA</div>
-                <div class="payment-icon">MC</div>
-                <div class="payment-icon">AMEX</div>
-                <div class="payment-icon">PAY</div>
-            </div>
-        </div>
-    </footer>
+  let currentBlobUrl = null;
+  let mode = 'prompt'; // 'prompt' | 'raw'
 
-    <script src="templatemo-noir-scripts.js"></script>
+  function revokeCurrent(){
+    if (currentBlobUrl){ try{ URL.revokeObjectURL(currentBlobUrl); }catch{} currentBlobUrl=null; }
+  }
+
+  function setGenerating(on=true){
+    if (on){
+      iframeWrap.classList.add('generating');
+      genBtn.disabled = true; downloadBtn.disabled = true; openNewBtn.disabled = true;
+      genBtn.dataset.origText = genBtn.innerHTML;
+      genBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating…';
+      genBtn.classList.remove('primary');
+    } else {
+      iframeWrap.classList.remove('generating');
+      genBtn.disabled = false; downloadBtn.disabled = false; openNewBtn.disabled = false;
+      genBtn.innerHTML = genBtn.dataset.origText || '<i class="fa fa-rocket"></i>&nbsp;Generate';
+      genBtn.classList.add('primary');
+    }
+  }
+
+  function setMode(m){
+    mode = m;
+    if (mode === 'prompt'){
+      modePromptBtn.classList.add('active'); modePromptBtn.setAttribute('aria-selected','true');
+      modeRawBtn.classList.remove('active'); modeRawBtn.setAttribute('aria-selected','false');
+
+      promptEditor.classList.remove('hidden');
+      htmlInput.classList.add('hidden');
+
+      promptEditor.focus();
+    } else {
+      modeRawBtn.classList.add('active'); modeRawBtn.setAttribute('aria-selected','true');
+      modePromptBtn.classList.remove('active'); modePromptBtn.setAttribute('aria-selected','false');
+
+      promptEditor.classList.add('hidden');
+      htmlInput.classList.remove('hidden');
+
+      htmlInput.focus();
+    }
+  }
+
+  modePromptBtn.addEventListener('click', () => setMode('prompt'));
+  modeRawBtn.addEventListener('click', () => setMode('raw'));
+
+  // sample & clear behave on visible editor
+  const samplePrompt = `Create a sleek one-page landing for a developer tool called "OpenVibeCode". Include: header with logo and nav, hero with headline and CTA, features 3-column section, and a footer. Minimal animations, modern gradient, dark theme.`;
+  const sampleRawHtml = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sample</title></head><body style="font-family:Inter,system-ui,Arial;background:#071022;color:#eaf4ff;padding:36px;"><header><h1>OpenVibeCode — Sample</h1></header><main><p>This is a simple sample HTML block to preview.</p></main><footer style="margin-top:28px;font-size:14px;color:#9fb7d9">Generated sample</footer></body></html>`;
+
+  sampleBtn.addEventListener('click', () => {
+    if (mode === 'prompt') promptEditor.value = samplePrompt;
+    else htmlInput.value = sampleRawHtml;
+    if (mode === 'prompt') promptEditor.focus(); else htmlInput.focus();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    if (mode === 'prompt') promptEditor.value = '';
+    else htmlInput.value = '';
+    if (mode === 'prompt') promptEditor.focus(); else htmlInput.focus();
+  });
+
+  // render HTML into iframe using htmlInput content
+  function renderHtmlIntoPreview(html){
+    if (!html) return;
+    revokeCurrent();
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    currentBlobUrl = url;
+    preview.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-scripts'); // adjust as needed
+    setTimeout(()=> preview.src = url, 50);
+  }
+
+  // main generate handler
+  async function generateHandler(){
+    if (mode === 'prompt'){
+      const prompt = promptEditor.value || '';
+      if (!prompt.trim()){ alert('Please enter a prompt to generate HTML'); return; }
+
+      setGenerating(true);
+      try {
+        const resp = await fetch('/generate', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ prompt: prompt, strip_scripts: false })
+        });
+        if (!resp.ok){
+          const err = await resp.json().catch(()=>({error:'server error'}));
+          throw new Error(err.error || resp.statusText);
+        }
+        const data = await resp.json();
+        const html = data.html || '';
+
+        // Put generated HTML into the Raw HTML editor (htmlInput) then render
+        htmlInput.value = html;
+        renderHtmlIntoPreview(html);
+
+        setGenerating(false);
+        promptEditor.focus();
+      } catch (err){
+        console.error(err);
+        alert('Generation failed: ' + (err.message || err));
+        setGenerating(false);
+        promptEditor.focus();
+      }
+    } else {
+      // raw mode: render htmlInput directly
+      const html = htmlInput.value || '';
+      if (!html.trim()){ alert('Please paste raw HTML into the Raw HTML editor to render it.'); return; }
+      setGenerating(true);
+      try {
+        renderHtmlIntoPreview(html);
+        setTimeout(()=> setGenerating(false), 160);
+      } catch (err){
+        console.error(err);
+        alert('Failed to render: ' + (err.message || err));
+        setGenerating(false);
+      }
+    }
+  }
+
+  genBtn.addEventListener('click', generateHandler);
+
+  // keyboard shortcut: Ctrl/Cmd + Enter triggers generate no matter which editor is focused
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      generateHandler();
+    }
+  });
+
+  // download / open: always use htmlInput content
+  downloadBtn.addEventListener('click', () => {
+    const html = htmlInput.value || '';
+    if (!html.trim()){ alert('Nothing to download — generate or paste HTML first.'); return; }
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'vibe-generated.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 1500);
+  });
+
+  openNewBtn.addEventListener('click', () => {
+    if (currentBlobUrl) { window.open(currentBlobUrl, '_blank', 'noopener'); return; }
+    const html = htmlInput.value || '';
+    if (!html.trim()){ alert('No preview available yet.'); return; }
+    const url = URL.createObjectURL(new Blob([html], {type:'text/html'}));
+    window.open(url, '_blank', 'noopener');
+    setTimeout(()=> URL.revokeObjectURL(url), 2000);
+  });
+
+  // initialize
+  setMode('prompt');
+
+})();
+</script>
 </body>
 </html>
