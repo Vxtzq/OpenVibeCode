@@ -31,6 +31,18 @@ Empower your ideas, streamline web development, and keep full control over your 
 
 ### Installation
 
-```git clone https://github.com/Vxtzq/OpenVibeCode```
+```git clone https://github.com/Vxtzq/OpenVibeCode && cd OpenVibeCode```
+
+
+```pip install -r requirements.txt```
+
+## Run
+
+
+```python app.py"```
+
+or if more control is wanted
+
+```python app.py --model_name "Qwen/Qwen3-4B-Thinking-2507" --system_prompt "You are a creative UI generator..."```
 
 
