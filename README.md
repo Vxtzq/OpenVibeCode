@@ -1,3 +1,5 @@
+[🌐 Visit OpenVibeCode](https://vxtzq.github.io/OpenVibeCode/) &nbsp;|&nbsp; [💻 GitHub Repo](https://github.com/Vxtzq/OpenVibeCode)
+
 # ![OpenVibeCode](imgs/Title.png)
 
 ## Vibe code websites in seconds
