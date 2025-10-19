@@ -1,8 +1,6 @@
 # ![OpenVibeCode](imgs/Title.png)
 
-![OpenVibeCode](imgs/Presentation.png)
-
-## #Vibe code websites in seconds
+## Vibe code websites in seconds
 
 Whether it is for project pages, simple web apps, or company sites, **OpenVibeCode** is made for you.  
 Build, customize, and modify source code — that's allowed!
