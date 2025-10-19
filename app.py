@@ -47,18 +47,7 @@ app.logger.info(f"Loading model: {MODEL_NAME}")
 @app.route("/")
 def index():
     return render_template("index.html")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_NAME,
-    device_map="auto",
-    torch_dtype=torch.float16,
-    quantization_config={
-        "load_in_4bit": True,
-        "bnb_4bit_use_double_quant": True,
-        "bnb_4bit_quant_type": "nf4",
-        "bnb_4bit_compute_dtype": torch.float16
-    }
-)
+
 # ----------------------------
 # Generation helper
 # ----------------------------
@@ -125,3 +114,15 @@ if __name__ == "__main__":
     app.logger.info(f"Running with model: {MODEL_NAME}")
     app.logger.info(f"System prompt: {SYSTEM_PROMPT[:100]}{'...' if len(SYSTEM_PROMPT) > 100 else ''}")
     app.run(host="0.0.0.0", port=5000, debug=False)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    device_map="auto",
+    torch_dtype=torch.float16,
+    quantization_config={
+        "load_in_4bit": True,
+        "bnb_4bit_use_double_quant": True,
+        "bnb_4bit_quant_type": "nf4",
+        "bnb_4bit_compute_dtype": torch.float16
+    }
+    )
