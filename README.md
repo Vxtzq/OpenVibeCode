@@ -28,3 +28,9 @@ OpenVibeCode is **free and open-source**. You can:
 - Contribute improvements or new features to the community.  
 
 Empower your ideas, streamline web development, and keep full control over your projects with OpenVibeCode.
+
+### Installation
+
+```git clone https://github.com/Vxtzq/OpenVibeCode```
+
+
