@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>VibeCode | AI-Powered Web Generation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root{
+            --dark-bg: #0A0F1D;
+            --navy: #0A0F1D;
+            --electric-blue: #4A90E2;
+            --teal: #00C9B2;
+            --magenta: #FF6B6B;
+            --glass-bg: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.12);
+            --transition: all 0.3s cubic-bezier(0.16, 0.86, 0.44, 1.08);
+            --shadow: 0 10px 30px rgba(74,144,226,0.15);
+        }
+
+        /* reset */
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+
+        /*
+          BODY CLASSES:
+          - default in this file = multi-gradient (smooth blended 3 layers)
+          - switch to a single gradient by adding class="single-gradient" on <body>
+        */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            min-height:100vh;
+            color:#f5f5f5;
+            line-height:1.6;
+            overflow-x:hidden;
+            /* fallback background color */
+            background-color: var(--dark-bg);
+            transition: background 0.6s ease;
+            display:flex;
+            flex-direction:column;
+            padding-bottom:60px;
+        }
+
+        /* ---- Multi-layer blended gradients (default) ----
+           Large, blurred radial layers that use mix-blend-mode to smoothly intersect.
+        */
+        .bg-layers{
+            position:fixed;
+            inset:0;
+            z-index:-2;
+            pointer-events:none;
+        }
+        .bg-layers .layer{
+            position:absolute;
+            filter: blur(96px);
+            opacity:0.95;
+            mix-blend-mode:screen; /* makes the colors blend smoothly */
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            will-change: transform, opacity;
+        }
+
+        /* electric blue top-left */
+        .bg-layers .g1{
+            left:-15%;
+            top:-20%;
+            width:70%;
+            height:70%;
+            background: radial-gradient(circle at 30% 30%, var(--electric-blue) 0%, rgba(74,144,226,0.75) 18%, rgba(74,144,226,0.25) 35%, transparent 60%);
+            transform: scale(1.12);
+        }
+
+        /* teal mid-right */
+        .bg-layers .g2{
+            right:-10%;
+            top:20%;
+            width:68%;
+            height:72%;
+            background: radial-gradient(circle at 70% 40%, var(--teal) 0%, rgba(0,201,178,0.8) 18%, rgba(0,201,178,0.25) 40%, transparent 65%);
+            transform: scale(1.03);
+        }
+
+        /* magenta bottom-left */
+        .bg-layers .g3{
+            left:10%;
+            bottom:-25%;
+            width:70%;
+            height:70%;
+            background: radial-gradient(circle at 40% 80%, var(--magenta) 0%, rgba(255,107,107,0.82) 16%, rgba(255,107,107,0.18) 36%, transparent 62%);
+            transform: scale(1.05);
+        }
+
+        /* ---- Single overall gradient option ---- */
+        body.single-gradient{
+            background: linear-gradient(135deg, var(--electric-blue) 0%, var(--teal) 48%, var(--magenta) 100%);
+        }
+        /* hide bg-layers when using single-gradient so only the linear gradient shows */
+        body.single-gradient .bg-layers{ display:none; }
+
+        /* Floating Lights Animation (kept above bg-layers) */
+        .floating-lights{
+            position:fixed;
+            inset:0;
+            z-index:-1; /* between bg-layers (-2) and content */
+            pointer-events:none;
+        }
+        .light{
+            position:absolute;
+            width:8px;height:8px;border-radius:50%;
+            background:var(--magenta);
+            opacity:0.8;
+            animation: float 25s infinite ease-in-out;
+            filter: blur(0.5px);
+        }
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity:0.8; }
+            50% { transform: translateY(-30px) translateX(15px); opacity:0.6; }
+            100% { transform: translateY(0) translateX(0); opacity:0.8; }
+        }
+
+        /* ---- Page layout + components (mostly unchanged, but removed per-section radial backgrounds) ---- */
+        .hero{
+            position:relative;
+            min-height:100vh;
+            padding:120px 20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            /* no per-section radial background — using global layers instead */
+        }
+        .hero-content{ position:relative; z-index:1; max-width:800px; text-align:center; padding:0 20px; }
+        .hero h1{
+            font-size:4.5rem; font-weight:700; margin-bottom:16px;
+            background:linear-gradient(90deg, var(--electric-blue), var(--teal));
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+            letter-spacing:-0.5px; text-shadow: 0 2px 10px rgba(74,144,226,0.08);
+        }
+        .hero p{ font-size:1.4rem; margin-bottom:24px; color:#e0e0e0; max-width:700px; margin-left:auto;margin-right:auto; line-height:1.6; }
+        .cta-button{
+            display:inline-block; background:linear-gradient(90deg, var(--electric-blue), var(--teal));
+            color:white; padding:16px 40px; font-size:1.1rem; font-weight:600; border-radius:12px; text-decoration:none;
+            transition:var(--transition); border:none; cursor:pointer; box-shadow:0 10px 25px rgba(74,144,226,0.3); position:relative; overflow:hidden; z-index:1;
+        }
+        .cta-button:hover{ transform: translateY(-3px) scale(1.02); box-shadow:0 15px 30px rgba(74,144,226,0.4); }
+        .cta-button::after{ content:''; position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, transparent, var(--teal) 50%, transparent); transform:translateX(-100%); transition:var(--transition); }
+        .cta-button:hover::after{ transform:translateX(100%); }
+
+        .demo-section{ padding:120px 20px; position:relative; overflow:hidden; background: linear-gradient(135deg, var(--dark-bg), #0D1B2A); }
+        .demo-container{ display:grid; grid-template-columns:1fr 1fr; gap:50px; max-width:1200px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
+        .demo-left{ display:flex; flex-direction:column; gap:24px; }
+        .demo-left h2{ font-size:2.2rem; font-weight:600; color:white; margin-bottom:12px; letter-spacing:-0.5px; }
+        .demo-left p{ color:#e0e0e0; font-size:1.1rem; max-width:600px; line-height:1.7; font-weight:300; }
+
+        .prompt-input{ background:var(--glass-bg); backdrop-filter: blur(8px); border-radius:16px; padding:22px 24px; border:1px solid var(--glass-border); width:100%; color:#e0e0e0; font-size:1.05rem; transition:var(--transition); }
+        .prompt-input:focus{ outline:none; border-color:var(--electric-blue); box-shadow:0 0 0 4px rgba(74,144,226,0.12); }
+        .prompt-input::placeholder{ color:#a0a0a0; font-weight:300; }
+
+        .generate-btn{ background:var(--glass-bg); backdrop-filter: blur(8px); border-radius:12px; padding:16px 32px; border:1px solid var(--glass-border); font-size:1.1rem; font-weight:600; color:white; cursor:pointer; transition:var(--transition); display:inline-flex; align-items:center; gap:12px; width:100%; text-align:center; }
+        .generate-btn:hover{ background: rgba(74,144,226,0.12); border-color: var(--electric-blue); }
+        .generate-btn i{ color:var(--electric-blue); font-size:1.2rem; }
+
+        .demo-right{ position:relative; background:var(--glass-bg); backdrop-filter: blur(10px); border-radius:24px; padding:40px 30px; border:1px solid var(--glass-border); overflow:hidden; transition:var(--transition); box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:1; }
+        .preview-container{ height:550px; display:flex; align-items:center; justify-content:center; border-radius:24px; overflow:hidden; position:relative; transition:var(--transition); border:1px solid var(--glass-border); background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(255,255,255,0.02)); }
+        .preview-container::before{ content:''; position:absolute; inset:0; z-index:0; opacity:0.06; } /* subtle overlay only */
+
+        .preview-content{ position:relative; z-index:1; padding:30px; text-align:center; color:white; transition:var(--transition); }
+        .preview-content h3{ font-size:2.2rem; margin-bottom:12px; background:linear-gradient(90deg, var(--electric-blue), var(--teal)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .preview-content p{ font-size:1.1rem; max-width:600px; margin:0 auto; line-height:1.6; }
+
+        .features{ padding:120px 20px; position:relative; z-index:1; }
+        .section-title{ text-align:center; margin-bottom:50px; }
+        .section-title h2{ font-size:2.2rem; font-weight:700; color:white; display:inline-block; position:relative; padding-bottom:16px; letter-spacing:-0.5px; }
+        .section-title h2::after{ content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:80px; height:3px; background:linear-gradient(90deg, var(--electric-blue), var(--teal)); border-radius:3px; }
+
+        .features-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:30px; max-width:1200px; margin:0 auto; padding:0 20px; }
+        .feature-card{ background:var(--glass-bg); backdrop-filter: blur(8px); border-radius:16px; padding:28px; border:1px solid var(--glass-border); transition:var(--transition); display:flex; flex-direction:column; height:100%; box-shadow:var(--shadow); }
+        .feature-card:hover{ transform: translateY(-5px); box-shadow:0 15px 40px rgba(74,144,226,0.25); }
+
+        .feature-icon{ width:60px; height:60px; background:var(--glass-bg); border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; color:#fff; font-size:1.5rem; }
+        .feature-card h3{ font-size:1.4rem; font-weight:600; margin-bottom:12px; color:white; }
+        .feature-card p{ color:#a0a0a0; font-size:1rem; line-height:1.6; }
+
+        .showcase{ padding:120px 20px; position:relative; z-index:1; }
+        .showcase-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:30px; max-width:1200px; margin:0 auto; padding:0 20px; }
+        .showcase-item{ background:var(--glass-bg); backdrop-filter: blur(8px); border-radius:16px; padding:24px; border:1px solid var(--glass-border); transition:var(--transition); display:flex; flex-direction:column; height:100%; }
+        .showcase-item:hover{ transform: translateY(-5px); box-shadow:0 10px 30px rgba(74,144,226,0.15); }
+        .showcase-item h3{ font-size:1.6rem; font-weight:600; color:white; margin-bottom:12px; text-align:center; }
+        .showcase-item .description{ color:#a0a0a0; font-size:1rem; line-height:1.6; text-align:center; }
+
+        .footer{ background: linear-gradient(to bottom, var(--dark-bg), #0A0F1D); padding:50px 20px; position:relative; z-index:1; margin-top:20px; }
+        .footer-content{ max-width:1200px; margin:0 auto; padding:0 20px; }
+        .footer-links{ display:flex; justify-content:center; gap:30px; margin-top:20px; }
+        .footer-link{ color:#e0e0e0; text-decoration:none; font-size:1rem; transition:var(--transition); display:inline-flex; align-items:center; gap:8px; }
+        .footer-link:hover{ color:var(--electric-blue); transform:translateY(-2px); }
+        .footer-bottom{ text-align:center; padding-top:20px; margin-top:20px; color:#a0a0a0; font-size:0.9rem; position:relative; }
+
+        /* responsiveness */
+        @media (max-width:768px){
+            .demo-container, .features-grid, .showcase-grid{ grid-template-columns:1fr; }
+            .hero h1{ font-size:2.8rem; }
+            .hero p{ font-size:1.1rem; }
+        }
+        @media (max-width:480px){
+            .cta-button{ width:100%; padding:14px 20px; }
+            .feature-card{ padding:20px; }
+        }
+        /* preview animation */
+        .preview-container.animated{ animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn{ from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    </style>
+</head>
+<body class="multi-gradient">
+    <!-- BG layers (default multi-gradient). To use single linear gradient add class "single-gradient" to <body> -->
+    <div class="bg-layers" aria-hidden="true">
+        <div class="layer g1"></div>
+        <div class="layer g2"></div>
+        <div class="layer g3"></div>
+    </div>
+
+    <!-- Floating Lights -->
+    <div class="floating-lights" aria-hidden="true">
+        <div class="light" style="top: 15%; left: 10%;"></div>
+        <div class="light" style="top: 30%; left: 45%;"></div>
+        <div class="light" style="top: 65%; left: 70%;"></div>
+        <div class="light" style="top: 25%; left: 85%;"></div>
+        <div class="light" style="top: 50%; left: 20%;"></div>
+        <div class="light" style="top: 75%; left: 55%;"></div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1>Code the vibe. Not the syntax.</h1>
+            <p>OpenVibeCode helps you design and generate stunning websites by describing their energy.</p>
+            <a href="https://github.com/Vxtzq/OpenVibeCode" class="cta-button">View on Github</a>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    
+
+    <!-- Features -->
+    <section class="features">
+        <div class="section-title">
+            <h2>How OpenVibeCode Works</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons" style="font-size:1.5rem;">laptop_windows</span>
+                </div>
+                <h3>AI-Powered Web Generation</h3>
+                <p>An advanced AI understands your creative vision and transforms it into stunning, responsive websites with zero coding required.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons" style="font-size:1.5rem;">chat_bubble</span>
+                </div>
+                <h3>Natural Language Design</h3>
+                <p>Describe your site's vibe in simple language — no technical jargon needed.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons" style="font-size:1.5rem;">sync</span>
+                </div>
+                <h3>Instant Deployment</h3>
+                <p>Get your website ready quickly — no waiting, just pure creative energy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons" style="font-size:1.5rem;">people</span>
+                </div>
+                <h3>Free and open-source</h3>
+                <p>All code is available on GitHub and is free to use/modify.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase -->
+    <section class="showcase">
+        <div class="section-title"><h2>Generated Vibes</h2></div>
+        <div class="showcase-grid">
+            <div class="showcase-item">
+                <h3>Clarity & Flow</h3>
+                <div class="description">Designs that prioritize clean layouts and smooth interactions for effortless coding sessions.</div>
+            </div>
+            <div class="showcase-item">
+                <h3>Energy & Focus</h3>
+                <div class="description">Interfaces that encourage engagement and concentration, using color and motion to keep the user in a productive state.</div>
+            </div>
+            <div class="showcase-item">
+                <h3>Calm & Comfort</h3>
+                <div class="description">UIs crafted to reduce cognitive load, with soft palettes and gentle animations to create a relaxed environment.</div>
+            </div>
+            <div class="showcase-item">
+                <h3>Dynamic & Expressive</h3>
+                <div class="description">Experiences that highlight creativity with visual accents and responsive elements to inspire experimentation.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://github.com/Vxtzq/OpenVibeCode" class="footer-link"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#" class="footer-link"><i class="fab fa-discord"></i> Discord</a>
+                <a href="#" class="footer-link"><i class="fas fa-book"></i> Docs</a>
+            </div>
+            <div class="footer-bottom">
+                <p>VibeCode - AI-Powered Web Generation</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // safe selectors (won't throw if elements don't exist)
+        document.addEventListener('DOMContentLoaded', function(){
+            const generateBtn = document.querySelector('.generate-btn');
+            const promptInput = document.querySelector('.prompt-input');
+            const previewContainer = document.querySelector('.preview-container');
+            const previewTitle = document.querySelector('.preview-content h3');
+            const previewDesc = document.querySelector('.preview-content p');
+
+            if (generateBtn && promptInput && previewContainer && previewTitle && previewDesc) {
+                generateBtn.addEventListener('click', function(){
+                    const prompt = promptInput.value.trim();
+                    if (!prompt) { alert('Please enter a design prompt'); return; }
+                    previewContainer.classList.add('animated');
+                    previewTitle.textContent = `Generated from your prompt: "${prompt}"`;
+                    previewDesc.textContent = 'Your website is ready to go live!';
+                    setTimeout(()=> previewContainer.classList.remove('animated'), 800);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
