@@ -1,1 +1,1 @@
-![OpenVibeCode](Title.png)
+![OpenVibeCode](imgs/Title.png)
