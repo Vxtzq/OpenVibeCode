@@ -3,227 +3,519 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OpenVibeCode — Prompt / Raw HTML Preview</title>
+<title>OpenVibeCode — Prompt / Raw HTML Preview (Fixed)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=terminal" />
 
+<!-- Add JSZip for creating ZIP files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
 <style>
-  :root{
-    --dark-bg:#0A0F1D;
-    --electric-blue:#4A90E2;
-    --teal:#00C9B2;
-    --magenta:#FF6B6B;
-    --glass-bg: rgba(255,255,255,0.05);
-    --glass-border: rgba(255,255,255,0.10);
-    --radius:14px;
-    --gap:16px;
-    --transition: all 0.28s cubic-bezier(0.16,0.86,0.44,1.08);
+  :root {
+    --dark-bg: #0A0F1D;
+    --electric-blue: #4A90E2;
+    --teal: #00C9B2;
+    --magenta: #FF6B6B;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --radius: 14px;
+    --gap: 16px;
+    --transition: all 0.28s cubic-bezier(0.16, 0.86, 0.44, 1.08);
+    --fg: #edf7ff;
+    --muted: #9fb7d9;
   }
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* ---------------------------
+     Reset & base
+     --------------------------- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: #071022;
-    color:#edf7ff;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    color: var(--fg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* background layers (same as before) */
-  .bg-layers{ position:fixed; inset:0; z-index:-3; pointer-events:none; }
-  .bg-layers .layer{ position:absolute; filter: blur(92px); mix-blend-mode:screen; opacity:0.95; }
-  .bg-layers .g1{ left:-12%; top:-18%; width:70%; height:70%; background: radial-gradient(circle at 30% 30%, var(--electric-blue) 0%, rgba(74,144,226,0.75) 18%, transparent 60%); transform:scale(1.08); }
-  .bg-layers .g2{ right:-8%; top:18%; width:68%; height:72%; background: radial-gradient(circle at 70% 40%, var(--teal) 0%, rgba(0,201,178,0.78) 18%, transparent 65%); transform:scale(1.03); }
-  .bg-layers .g3{ left:8%; bottom:-22%; width:70%; height:70%; background: radial-gradient(circle at 40% 80%, var(--magenta) 0%, rgba(255,107,107,0.8) 16%, transparent 62%); transform:scale(1.04); }
+  /* ---------------------------
+     Background accents
+     --------------------------- */
+  .bg-layers {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+  }
 
-  .floating-lights{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
-  .light{ position:absolute; width:8px; height:8px; border-radius:50%; background:var(--magenta); opacity:0.8; filter: blur(0.3px); animation: float 28s infinite ease-in-out; }
-  @keyframes float { 0%{transform:translateY(0)}50%{transform:translateY(-28px)}100%{transform:translateY(0)} }
+  .bg-layers .layer {
+    position: absolute;
+    filter: blur(92px);
+    mix-blend-mode: screen;
+    opacity: 0.95;
+  }
 
-  header{
-    display:flex; align-items:center; justify-content:space-between; gap:var(--gap);
-    padding:14px 20px; z-index:2; position:relative;
+  .bg-layers .g1 {
+    left: -12%;
+    top: -18%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle at 30% 30%, var(--electric-blue) 0%, rgba(74,144,226,0.75) 18%, transparent 60%);
+    transform: scale(1.08);
+  }
+
+  .bg-layers .g2 {
+    right: -8%;
+    top: 18%;
+    width: 68%;
+    height: 72%;
+    background: radial-gradient(circle at 70% 40%, var(--teal) 0%, rgba(0,201,178,0.78) 18%, transparent 65%);
+    transform: scale(1.03);
+  }
+
+  .bg-layers .g3 {
+    left: 8%;
+    bottom: -22%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle at 40% 80%, var(--magenta) 0%, rgba(255,107,107,0.8) 16%, transparent 62%);
+    transform: scale(1.04);
+  }
+
+  .floating-lights {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  .light {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--magenta);
+    opacity: 0.8;
+    filter: blur(0.3px);
+    animation: float 28s infinite ease-in-out;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-28px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* ---------------------------
+     Header
+     --------------------------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap);
+    padding: 14px 20px;
+    z-index: 2;
+    position: relative;
     backdrop-filter: blur(8px);
     background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
-    border-bottom:1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
   }
-  .brand{ display:flex; gap:12px; align-items:center; }
-  .logo{ width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--electric-blue),var(--teal)); box-shadow:0 8px 24px rgba(74,144,226,0.16); }
-  .title{ font-weight:700; font-size:1rem }
-  .meta{ color:#bcd9f8; font-size:0.85rem }
-  .links a{ color:#eaf6ff; text-decoration:none; padding:8px 12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02) }
-  .links a:hover{ transform:translateY(-3px); box-shadow:0 6px 20px rgba(74,144,226,0.08) }
 
-  /* main must participate in height chain */
-  main{
-    display:grid;
+  .brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--electric-blue), var(--teal));
+    box-shadow: 0 8px 24px rgba(74,144,226,0.16);
+  }
+
+  .title {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .meta {
+    color: #bcd9f8;
+    font-size: 0.85rem;
+  }
+
+  .links a {
+    color: var(--fg);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.02);
+  }
+
+  .links a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(74,144,226,0.08);
+  }
+
+  /* ---------------------------
+     Layout / Panels
+     --------------------------- */
+  main {
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap:26px;
-    padding:26px;
-    width:100%;
-    max-width:100%;
-    margin:0 auto;
-    flex:1 1 auto;     /* important so main grows */
-    min-height:0;      /* allow children to shrink correctly */
+    gap: 26px;
+    padding: 26px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
-  .panel{ background:var(--glass-bg); border-radius:14px; border:1px solid var(--glass-border); padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow: 0 12px 32px rgba(2,6,20,0.6); min-height:0; }
-  label{ color:#cfe7ff; font-weight:600 }
-  .controls-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
-  .segmented{ display:inline-flex; background:rgba(255,255,255,0.02); border-radius:10px; padding:4px; border:1px solid rgba(255,255,255,0.03); }
-  .segmented button{ background:transparent; color:#dff2ff; border:0; padding:8px 12px; cursor:pointer; border-radius:8px; font-weight:600; }
-  .segmented button.active{ background: linear-gradient(90deg,var(--electric-blue),var(--teal)); box-shadow:0 8px 22px rgba(74,144,226,0.16); color:white; }
+  @media (max-width: 960px) {
+    main {
+      grid-template-columns: 1fr;
+      padding: 18px;
+    }
+  }
 
-  /* generic textarea styling (no height) */
+  .panel {
+    background: var(--glass-bg);
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 12px 32px rgba(2,6,20,0.6);
+    min-height: 0;
+  }
+
+  label {
+    color: #cfe7ff;
+    font-weight: 600;
+  }
+
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .segmented {
+    display: inline-flex;
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .segmented button {
+    background: transparent;
+    color: #dff2ff;
+    border: 0;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .segmented button.active {
+    background: linear-gradient(90deg, var(--electric-blue), var(--teal));
+    box-shadow: 0 8px 22px rgba(74,144,226,0.16);
+    color: white;
+  }
+
   textarea {
-    width:100%;
-    border-radius:12px;
-    border:1px solid rgba(255,255,255,0.12);
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.06);
-    color:#eaf4ff;
-    padding:12px;
+    color: #eaf4ff;
+    padding: 12px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;
-    font-size:14px;
-    line-height:1.6;
+    font-size: 14px;
+    line-height: 1.6;
     resize: vertical;
     min-height: 64px;
-    overflow:auto;
+    overflow: auto;
   }
 
-  /* both textareas should have exactly same properties and stretch the same */
   .editor-textarea {
-    flex: 1 1 auto;   /* stretch to fill available space */
-    min-height: 0;    /* allow flexbox to control height */
+    flex: 1 1 auto;
+    min-height: 0;
     resize: vertical;
-    overflow:auto;
+    overflow: auto;
     background: rgba(255,255,255,0.03);
   }
 
-  /* small differences: visual min sizes */
-  #promptEditor { min-height:36vh; }
-  #htmlInput   { min-height:36vh; } /* match promptEditor exactly */
+  #promptEditor { min-height: 36vh; }
+  #htmlInput   { min-height: 36vh; }
 
-  .hidden { display:none !important; }
+  .hidden { display: none !important; }
+  .small  { font-size: 0.85rem; color: var(--muted); }
 
-  .small{ font-size:0.85rem; color:#9fb7d9 }
-
-  /* preview column participates in height chain */
+  /* ---------------------------
+     Preview panel & iframe
+     --------------------------- */
   .preview-panel { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+  .preview-panel > .panel { padding: 10px; display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
 
-  /* ensure the inner .panel inside preview stretches fully */
-  .preview-panel > .panel { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; padding:10px; }
+  .preview-top { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 6px; }
+  .preview-actions { display:flex; gap:8px; align-items:center; }
 
-  .preview-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 6px; }
-  .preview-actions{ display:flex; gap:8px; align-items:center }
-  .btn{ border:0; padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer; }
-  .btn.primary{ background:linear-gradient(90deg,var(--electric-blue),var(--teal)); color:white; box-shadow:0 10px 30px rgba(74,144,226,0.14) }
-  .btn.ghost{ background:transparent; color:#d6efff; border:1px solid rgba(255,255,255,0.03) }
+  .btn { border:0; padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer; }
+  .btn.primary { background: linear-gradient(90deg, var(--electric-blue), var(--teal)); color:white; box-shadow:0 10px 30px rgba(74,144,226,0.14); }
+  .btn.ghost   { background: transparent; color: #d6efff; border: 1px solid rgba(255,255,255,0.03); }
 
-  /* iframe wrapper must stretch and allow iframe to fill */
   .iframe-wrap {
-    position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-    border-radius: 12px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-    overflow: hidden; /* avoid double scrollbars */
-  }
-
-  .iframe-wrap.generating iframe { filter: blur(6px) brightness(0.9); transform: scale(0.995); pointer-events: none; transition: filter 0.28s ease, transform 0.28s ease; }
-  .generating-overlay{ display:none; position:absolute; inset:10px; border-radius:10px; z-index:8; background: linear-gradient(180deg, rgba(10,16,25,0.55), rgba(4,8,12,0.55)); backdrop-filter: blur(4px); align-items:center; justify-content:center; }
-  .iframe-wrap.generating .generating-overlay{ display:flex; pointer-events:auto; }
-
-  .gen-spinner {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(74, 144, 226, 0.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-}
-
-.gen-spinner::before,
-.gen-spinner::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  border: 4px solid transparent;
-  border-top-color: var(--electric-blue);
-  border-bottom-color: var(--teal);
-}
-
-.gen-spinner::before {
-  width: 100%;
-  height: 100%;
-  animation: spin 1.2s linear infinite;
-}
-
-.gen-spinner::after {
-  width: 70%;
-  height: 70%;
-  animation: spin 0.8s linear reverse infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-  .gen-label{ margin-top:12px;color:#d6efff;font-weight:600;font-size:14px;text-align:center;opacity:0.95; }
-
-  /* iframe stretches to fill the iframe-wrap */
-  iframe#preview {
-    flex: 1 1 auto;
-    width: 100%;
-    min-height: 0;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    box-shadow: 0 12px 32px rgba(2,6,20,0.6);
-  }
-
-  @media (max-width:960px){
-    main{ grid-template-columns: 1fr; padding:18px; }
-    #promptEditor{ min-height:40vh }
-    #htmlInput{ min-height:40vh }
-    .iframe-wrap{ height:44vh }
-  }
-  
-  .generating-overlay {
-  display: none;
-  position: absolute;
-  inset: 0;               /* top:0; right:0; bottom:0; left:0 */
-  border-radius: 10px;
-  z-index: 8;
-  background: linear-gradient(180deg, rgba(10,16,25,0.55), rgba(4,8,12,0.55));
-  backdrop-filter: blur(4px);
-
-            /* flex centering */
-  align-items: center;    /* vertical center */
-  justify-content: center;/* horizontal center */
-}
-.generating-overlay > div {
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); /* subtle */
+  padding: 0; /* remove padding */
 }
-  .logo { display:flex; align-items:center; justify-content:center; width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--electric-blue),var(--teal)); color:#fff; }
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48; }
+
+
+
+/* Overlay around the iframe */
+.iframe-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.28); /* smooth semi-transparent black */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure iframe content stays above overlay */
+.iframe-wrap iframe {
+  position: relative;
+  z-index: 2;
+}
+
+
+
+  iframe#preview {
+  border: 0;                 /* remove white-ish border */
+  border-radius: 12px;        /* keep rounded corners */
+  box-shadow: none;           /* remove thick shadow */
+  background-color: transparent;
+}
+
+  /* subtle transform while generating (no heavy blur) */
+  .iframe-wrap.generating iframe {
+    transform: translateY(-2px) scale(0.997);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    pointer-events: none;
+    filter: none; /* removed blur for smoothness */
+}
+
+/* generating overlay */
+.iframe-wrap.generating .generating-overlay {
+    display: flex;
+    pointer-events: auto;
+    background: linear-gradient(180deg, rgba(8,12,18,0.24), rgba(3,6,10,0.24));
+    backdrop-filter: blur(2px) saturate(110%); /* subtle blur */
+    -webkit-backdrop-filter: blur(2px) saturate(110%);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    opacity: 1;
+}
+
+  /* ---------------------------
+     Generating overlay (compact + centered)
+     --------------------------- */
+  .generating-overlay {
+    display: none;
+    position: absolute;
+    inset: 10px;
+    border-radius: 10px;
+    z-index: 8;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  
+
+  /* loader card (keeps previous look, but slimmer) */
+  .loader-card {
+    width: min(440px, 86%);
+    max-width: 92%;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 18px 44px rgba(2,6,20,0.6), 0 2px 6px rgba(0,0,0,0.25);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.04);
+    color: var(--fg);
+    text-align: left;
+    pointer-events: auto;
+  }
+
+  .loader-head {
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  .loader-head .small-logo {
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(135deg, var(--electric-blue), var(--teal));
+    box-shadow: 0 10px 28px rgba(74,144,226,0.12);
+    font-weight:700;
+  }
+
+  .loader-title { font-weight:700; font-size:1rem; }
+  .loader-sub   { font-size:0.86rem; color:#bfeaf7; opacity:0.9; }
+
+  /* skeleton preview row kept subtle */
+  .skeleton-row { display:flex; gap:12px; align-items:center; }
+  .skeleton-thumb { width:72px; height:48px; border-radius:8px; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); position:relative; overflow:hidden; }
+  .skeleton-lines { flex:1; display:flex; flex-direction:column; gap:8px; }
+  .skeleton-line { height:8px; border-radius:6px; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); position:relative; overflow:hidden; }
+  .skeleton-line.short { width:48%; } .skeleton-line.long { width:86%; }
+
+  @keyframes shimmer { 0% { transform: translateX(-110%); } 100% { transform: translateX(110%); } }
+  .skeleton-thumb::after, .skeleton-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-110%);
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* 3-dot loader (kept optional) */
+  .dots { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:8px; }
+  .dots span { display:block; width:10px; height:10px; border-radius:50%; background:linear-gradient(180deg, var(--electric-blue), var(--teal)); transform-origin:center; opacity:0.95; animation: dot-bounce 0.9s infinite ease-in-out; }
+  .dots span:nth-child(2) { animation-delay: 0.12s; } .dots span:nth-child(3) { animation-delay: 0.24s; }
+  @keyframes dot-bounce { 0% { transform: translateY(0) scale(0.95); opacity:0.7 } 50% { transform: translateY(-8px) scale(1.08); opacity:1 } 100% { transform: translateY(0) scale(0.95); opacity:0.7 } }
+
+  .loader-note { font-size:0.78rem; color:var(--muted); text-align:center; margin-top:6px; opacity:0.95; }
+
+  @media (max-width:520px) {
+    .loader-card { padding:12px; gap:8px; }
+    .skeleton-thumb { width:60px; height:42px; }
+  }
+
+  /* ---------------------------
+     OpenAI-like clean outline spinner (replaces previous heavy spinner)
+     --------------------------- */
+  .gen-spinner {
+  width: 96px;             /* slightly smaller */
+  height: 96px;
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  border-radius: 50%;
+  margin: 6px 0;
+  background: rgba(255, 255, 255, 0.03); /* subtle background */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+/* faint circular track */
+.gen-spinner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.08); /* lighter, thinner track */
+}
+
+/* animated colored arc (simpler, less busy) */
+.gen-spinner::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--electric-blue), var(--teal) 45deg, rgba(255,255,255,0.02) 90deg 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), black calc(100% - 6px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 6px), black calc(100% - 6px));
+  animation: spin-rotate 1.5s linear infinite; /* remove pulse for sobriety */
+  transform-origin: center;
+}
+
+/* center dot */
+.gen-spinner .center-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--electric-blue), var(--teal));
+  box-shadow: 0 4px 12px rgba(74,144,226,0.12);
+  position: relative;
+  z-index: 2;
+}
+
+/* spin animation */
+@keyframes spin-rotate { to { transform: rotate(360deg); } }
+
+/* label under spinner */
+.gen-label {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+  .gen-container { display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px; border-radius:10px; min-width:180px; }
+
+  /* ---------------------------
+     Scrollbar (simple, thin)
+     --------------------------- */
+  ::-webkit-scrollbar { height:10px; width:10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--electric-blue), var(--teal));
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.12);
+  }
+  ::-webkit-scrollbar-thumb:hover { filter: brightness(.95); }
+
+  /* Firefox */
+  * { scrollbar-width: thin; scrollbar-color: linear-gradient(180deg, var(--electric-blue), var(--teal)) transparent; }
+
+  /* Focus */
+  :focus { outline: 2px solid rgba(74,144,226,0.12); outline-offset: 2px; }
 </style>
 </head>
 <body class="multi-gradient">
-
   <div class="bg-layers" aria-hidden="true">
     <div class="layer g1"></div>
     <div class="layer g2"></div>
@@ -251,12 +543,14 @@
     </div>
 
     <div class="links">
-      <a href="https://github.com/Vxtzq/OpenVibeCode" target="_blank" rel="noopener"><i class="fab fa-github"></i>&nbsp;GitHub</a>
+      <a href="https://github.com/Vxtzq/OpenVibeCode" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>&nbsp;GitHub
+      </a>
     </div>
   </header>
 
   <main>
-    <!-- editor panel -->
+    <!-- Editor panel -->
     <section class="panel editor-panel" aria-labelledby="editor-label">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
         <div>
@@ -272,15 +566,19 @@
         </div>
       </div>
 
-      <!-- Prompt textarea (visible in Prompt mode) -->
-      <textarea id="promptEditor" class="editor-textarea" spellcheck="false" placeholder="Write a natural-language prompt (what you want: layout, sections, colors, components...)."></textarea>
+      <!-- Prompt textarea -->
+      <textarea id="promptEditor" class="editor-textarea" spellcheck="false" 
+                placeholder="Write a natural-language prompt (what you want: layout, sections, colors, components...)"></textarea>
 
-      <!-- Raw HTML textarea (visible in Raw HTML mode) -->
-      <textarea id="htmlInput" class="editor-textarea hidden" spellcheck="false" placeholder="Edit or paste raw HTML here. When in Prompt mode, generated HTML will be placed here (even if hidden)"></textarea>
+      <!-- Raw HTML textarea -->
+      <textarea id="htmlInput" class="editor-textarea hidden" spellcheck="false" 
+                placeholder="Edit or paste raw HTML here. When in Prompt mode, generated HTML will be placed here (even if hidden)"></textarea>
 
       <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
         <div style="display:flex; gap:8px;">
-          <button id="generateBtn" class="btn primary" title="Generate HTML"><i class="fa fa-rocket"></i>&nbsp;Generate</button>
+          <button id="generateBtn" class="btn primary" title="Generate HTML">
+            <i class="fa fa-rocket"></i>&nbsp;Generate
+          </button>
           <button id="sampleBtn" class="btn ghost" title="Insert a sample prompt/html">Sample</button>
           <button id="clearBtn" class="btn ghost">Clear</button>
         </div>
@@ -288,21 +586,23 @@
       </div>
     </section>
 
-    <!-- preview panel -->
+    <!-- Preview panel -->
     <aside class="preview-panel">
       <div class="panel">
         <div class="preview-top">
           <div><strong>Live Preview</strong></div>
           <div class="preview-actions">
-            <button id="download" class="btn primary" title="Download the currently rendered HTML"><i class="fa fa-download"></i>&nbsp;Download</button>
-            <button id="openNew" class="btn ghost" title="Open preview in new tab"><i class="fa fa-external-link-alt"></i>&nbsp;Open</button>
+            <button id="downloadAllBtn" class="btn primary" title="Download all pages as ZIP">
+              <i class="fa fa-download"></i>&nbsp;Download All
+            </button>
+            <button id="openFullSiteBtn" class="btn ghost" title="Open full site in new tab">
+              <i class="fa fa-external-link-alt"></i>&nbsp;Open Full Site
+            </button>
           </div>
         </div>
 
         <div class="iframe-wrap" role="region" aria-live="polite">
           <iframe id="preview" sandbox="allow-forms allow-pointer-lock allow-scripts"></iframe>
-
-          <!-- generating overlay -->
           <div class="generating-overlay" aria-hidden="true">
             <div style="text-align:center">
               <div class="gen-spinner" aria-hidden="true"></div>
@@ -314,177 +614,725 @@
     </aside>
   </main>
 
-<!-- ===== behavior script (keeps same IDs) ===== -->
 <script>
-(function(){
+(function() {
+  // DOM Elements
   const promptEditor = document.getElementById('promptEditor');
   const htmlInput = document.getElementById('htmlInput');
   const preview = document.getElementById('preview');
   const iframeWrap = document.querySelector('.iframe-wrap');
-  const downloadBtn = document.getElementById('download');
-  const openNewBtn = document.getElementById('openNew');
-  const genBtn = document.getElementById('generateBtn');
+  const downloadAllBtn = document.getElementById('downloadAllBtn');
+  const openFullSiteBtn = document.getElementById('openFullSiteBtn');
+  const generateBtn = document.getElementById('generateBtn');
   const sampleBtn = document.getElementById('sampleBtn');
   const clearBtn = document.getElementById('clearBtn');
   const modePromptBtn = document.getElementById('mode-prompt');
   const modeRawBtn = document.getElementById('mode-raw');
 
-  let currentBlobUrl = null;
-  let mode = 'prompt'; // 'prompt' | 'raw'
+  // State Variables
+  let currentMode = 'prompt'; // 'prompt' or 'raw'
+  let pageManager = null;
+  let currentFile = null;
+  let fullSiteWindow = null;
 
-  function revokeCurrent(){
-    if (currentBlobUrl){ try{ URL.revokeObjectURL(currentBlobUrl); }catch{} currentBlobUrl=null; }
-  }
-
-  function setGenerating(on=true){
-    if (on){
-      iframeWrap.classList.add('generating');
-      genBtn.disabled = true; downloadBtn.disabled = true; openNewBtn.disabled = true;
-      genBtn.dataset.origText = genBtn.innerHTML;
-      genBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating…';
-      genBtn.classList.remove('primary');
-    } else {
-      iframeWrap.classList.remove('generating');
-      genBtn.disabled = false; downloadBtn.disabled = false; openNewBtn.disabled = false;
-      genBtn.innerHTML = genBtn.dataset.origText || '<i class="fa fa-rocket"></i>&nbsp;Generate';
-      genBtn.classList.add('primary');
+  // ======================
+  // Page Manager Class
+  // ======================
+  class PageManager {
+    constructor() {
+      this.pages = {}; // { filename: htmlContent }
+      this.blobUrls = {}; // { filename: blobUrl }
+      this.cleanup();
     }
+
+    cleanup() {
+      // Revoke all blob URLs
+      Object.values(this.blobUrls).forEach(url => {
+        try { URL.revokeObjectURL(url); } catch (e) {}
+      });
+      
+      this.pages = {};
+      this.blobUrls = {};
+      currentFile = null;
+    }
+
+    /**
+     * Parse the response from the server and extract pages
+     */
+    parseResponse(response) {
+      // Try to find JSON in the response
+      let jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("No valid JSON found in response");
+      }
+
+      let jsonString = jsonMatch[0];
+      let parsed;
+      
+      try {
+        // First attempt: direct parse
+        parsed = JSON.parse(jsonString);
+      } catch (e) {
+        try {
+          // Second attempt: fix common issues
+          let fixed = jsonString
+            .replace(/(\s*)([a-zA-Z0-9_\-]+)(\s*):/g, '$1"$2"$3:') // Quote keys
+            .replace(/'/g, '"') // Single quotes to double
+            .replace(/,\s*}/g, '}') // Trailing commas
+            .replace(/,\s*]/g, ']');
+          
+          parsed = JSON.parse(fixed);
+        } catch (e2) {
+          throw new Error("Failed to parse response as JSON: " + e2.message);
+        }
+      }
+
+      // Normalize to a pages object
+      let pages = this.normalizePages(parsed);
+      if (!pages || Object.keys(pages).length === 0) {
+        throw new Error("Response does not contain valid page mappings");
+      }
+
+      return pages;
+    }
+
+    /**
+     * Normalize various JSON structures to a simple pages mapping
+     */
+    normalizePages(data) {
+      // Case 1: Direct mapping of filename -> HTML
+      if (Object.keys(data).some(key => key.endsWith('.html'))) {
+        return data;
+      }
+      
+      // Case 2: { files: { ... } } structure
+      if (data.files && typeof data.files === 'object') {
+        return data.files;
+      }
+      
+      // Case 3: Search recursively
+      const findPages = (obj) => {
+        if (typeof obj !== 'object' || obj === null) return null;
+        
+        // Check if this object has .html keys
+        if (Object.keys(obj).some(key => key.endsWith('.html'))) {
+          return obj;
+        }
+        
+        // Search nested objects
+        for (const value of Object.values(obj)) {
+          const result = findPages(value);
+          if (result) return result;
+        }
+        
+        return null;
+      };
+      
+      return findPages(data) || null;
+    }
+
+    /**
+     * Process and store pages
+     */
+    processPages(pages) {
+      this.cleanup();
+      
+      // Process each page
+      for (const [filename, html] of Object.entries(pages)) {
+        const cleanFilename = filename.replace(/^\//, '');
+        const processedHtml = this.ensureHtmlStructure(html, cleanFilename);
+        
+        this.pages[cleanFilename] = processedHtml;
+        this.createBlobUrl(cleanFilename, processedHtml);
+      }
+      
+      // Add navigation script to all pages (used for iframe internal navigation)
+      this.injectNavigationScript();
+      
+      return Object.keys(this.pages);
+    }
+
+    /**
+     * Ensure proper HTML structure
+     */
+    ensureHtmlStructure(html, filename) {
+      if (!html) return '';
+      
+      // Check if it's already a complete HTML document
+      const lowerHtml = html.toLowerCase();
+      if (lowerHtml.includes('<!doctype') || 
+          (lowerHtml.includes('<html') && lowerHtml.includes('<body'))) {
+        return html;
+      }
+      
+      // Create a proper HTML structure
+      let title = 'OpenVibeCode';
+      if (filename) {
+        const pageName = filename.replace('.html', '')
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
+        title = `OpenVibeCode - ${pageName}`;
+      }
+      
+      return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+</head>
+<body>
+  ${html}
+</body>
+</html>`;
+    }
+
+    /**
+     * Create a Blob URL for a page
+     */
+    createBlobUrl(filename, html) {
+      const blob = new Blob([html], { type: 'text/html' });
+      this.blobUrls[filename] = URL.createObjectURL(blob);
+    }
+
+    /**
+     * Inject navigation script into all pages
+     */
+    injectNavigationScript() {
+      const navScript = `\n<script>\n  // Internal link handling\n  document.addEventListener('click', function(e) {\n    let target = e.target;\n    while (target && target.tagName !== 'A') {\n      target = target.parentElement;\n    }\n    \n    if (target && target.href) {\n      const href = target.getAttribute('href');\n      \n      // Handle internal links (not external URLs)\n      if (href && !href.startsWith('http') && !href.startsWith('//')) {\n        e.preventDefault();\n        \n        // Normalize the URL\n        let cleanUrl = href\n          .replace(/^(\\.\\/|\\/)/, '') // Remove leading ./ or /\n          .replace(/\\.html$/, '') + '.html'; // Ensure .html extension\n        \n        // Send navigation request to parent\n        window.parent.postMessage({\n          action: 'navigate',\n          url: cleanUrl\n        }, '*');\n      }\n    }\n  });\n\n  // Handle iframe height\n  function updateHeight() {\n    const height = Math.max(\n      document.body.scrollHeight,\n      document.documentElement.scrollHeight,\n      document.body.offsetHeight,\n      document.documentElement.offsetHeight\n    );\n    \n    window.parent.postMessage({ height: height }, '*');\n  }\n\n  // Initial height calculation\n  window.addEventListener('load', () => {\n    updateHeight();\n    setTimeout(updateHeight, 500);\n  });\n  \n  // Handle resize events\n  window.addEventListener('resize', updateHeight);\n<\/script>\n`;
+
+      // Add the script to each page
+      for (const [filename, html] of Object.entries(this.pages)) {
+        if (html.includes('</body>')) {
+          this.pages[filename] = html.replace('</body>', navScript + '</body>');
+        } else {
+          this.pages[filename] = html + navScript;
+        }
+        
+        // Update the blob URL
+        this.createBlobUrl(filename, this.pages[filename]);
+      }
+    }
+
+    /**
+     * Load a specific page into the iframe
+     */
+    loadPage(filename) {
+      // Normalize filename
+      let cleanFilename = filename.replace(/^\//, '');
+      
+      // Try with .html extension if not found
+      if (!this.blobUrls[cleanFilename] && !cleanFilename.endsWith('.html')) {
+        cleanFilename += '.html';
+      }
+      
+      // Check if the file exists
+      if (!this.blobUrls[cleanFilename]) {
+        console.error(`Page not found: ${filename}`);
+        return false;
+      }
+      
+      // Update current file
+      currentFile = cleanFilename;
+      
+      // Update the iframe - ensure allow-same-origin so scripts can run inside blob
+      preview.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+      preview.src = this.blobUrls[cleanFilename];
+      
+      // Update the raw HTML editor
+      if (this.pages[cleanFilename]) {
+        htmlInput.value = this.pages[cleanFilename];
+      }
+      
+      return true;
+    }
+
+    /**
+     * Get the content of a page
+     */
+    getPageContent(filename) {
+      return this.pages[filename] || null;
+    }
+
+    /**
+     * Get the first page (typically home.html)
+     */
+    getFirstPage() {
+      if (this.pages['home.html']) return 'home.html';
+      return Object.keys(this.pages)[0] || null;
+    }
+    
+    /**
+     * Generate a single HTML file that contains all pages
+     */
+    /**
+ * Generate a single HTML file that contains all pages (CORRECTED VERSION)
+ */
+/**
+ * Generate a single HTML file that contains all pages (CORRECTED VERSION)
+ */
+/**
+ * Generate a single HTML file that contains all pages (CORRECTED VERSION)
+ */
+/**
+ * Generate a single HTML file that contains all pages with proper navigation
+ */
+/**
+ * Generate a single HTML file that contains all pages with proper font handling
+ */
+generateFullSiteHtml() {
+  preview.style.backgroundColor = '#ffffff';
+  if (Object.keys(this.pages).length === 0) {
+    return null;
+  }
+  
+  // Create navigation links
+  let navigationLinks = '';
+  Object.keys(this.pages).forEach(filename => {
+    const displayName = filename.replace('.html', '').replace(/_/g, ' ');
+    navigationLinks += `<a href="#${filename}" class="nav-link" data-page="${filename}">${displayName}</a> | `;
+  });
+  
+  // Remove trailing " | "
+  navigationLinks = navigationLinks.slice(0, -3);
+  
+  // Collect all unique font imports across all pages
+  let fontImports = new Set();
+  let allStyles = '';
+  
+  // Create containers for each page
+  let pagesContainer = '';
+  Object.entries(this.pages).forEach(([filename, html]) => {
+    // Extract head and body content
+    const headMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+    const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    
+    let headContent = headMatch ? headMatch[1] : '';
+    let bodyContent = bodyMatch ? bodyMatch[1] : html;
+    
+    // Extract and collect font imports
+    const fontLinkMatches = headContent.match(/<link[^>]+rel=["']stylesheet["'][^>]*href=["']https?:\/\/fonts\.googleapis\.com[^"']+["'][^>]*>/gi);
+    if (fontLinkMatches) {
+      fontLinkMatches.forEach(link => {
+        fontImports.add(link);
+      });
+    }
+    
+    // Extract style tags content
+    const styleMatches = headContent.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+    if (styleMatches) {
+      styleMatches.forEach(style => {
+        // Extract just the CSS content
+        const cssContent = style.replace(/<style[^>]*>/, '').replace(/<\/style>/, '');
+        allStyles += cssContent + '\n';
+      });
+    }
+    
+    // Clean up head content
+    headContent = headContent
+      .replace(/<meta charset[^>]*>/gi, '')
+      .replace(/<meta name="viewport"[^>]*>/gi, '')
+      .replace(/<link[^>]+rel=["']stylesheet["'][^>]*href=["']https?:\/\/fonts\.googleapis\.com[^"']+["'][^>]*>/gi, '')
+      .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, '')
+      .replace(/^\s*|\s*$/g, '');
+    
+    // CRITICAL FIX: Rewrite ALL internal links to use hash navigation
+    bodyContent = bodyContent.replace(
+      /(<a\s+[^>]*href\s*=\s*["'])([^"']*\.(?:html|HTML))(["'][^>]*>)/gi,
+      (match, prefix, url, suffix) => {
+        const cleanUrl = url.replace(/^[.\/]+/, '');
+        if (Object.keys(this.pages).includes(cleanUrl)) {
+          return `${prefix}#${cleanUrl}${suffix}`;
+        }
+        return match;
+      }
+    );
+    
+    // Create the page container
+    pagesContainer += `
+<div class="page-container" id="page-${filename}" style="display: none;">
+  <style>${headContent}</style>
+  ${bodyContent}
+</div>`;
+  });
+  
+  // Get the first page to show initially
+  const firstPage = this.getFirstPage() || Object.keys(this.pages)[0];
+  
+  // Create the full HTML structure
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenVibeCode - Full Site</title>
+  ${Array.from(fontImports).join('\n')}  <!-- Include all Google Fonts imports -->
+  <style>
+    
+    
+    ${allStyles}  <!-- Include all CSS styles from all pages -->
+    
+    
+  </style>
+</head>
+<body>
+  
+  
+  <div id="pages-container">
+    ${pagesContainer}
+  </div>
+  
+  <script>
+    // Initialize with the first page
+    document.getElementById('page-${firstPage}').style.display = 'block';
+    
+    // Central navigation handler - handles ALL navigation
+    function navigateTo(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page-container').forEach(page => {
+        page.style.display = 'none';
+      });
+      
+      // Show the selected page
+      const targetPage = document.getElementById('page-' + pageId);
+      if (targetPage) {
+        targetPage.style.display = 'block';
+        window.location.hash = pageId;
+        return true;
+      }
+      return false;
+    }
+    
+    // Set up navigation for top nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const pageId = this.getAttribute('data-page');
+        navigateTo(pageId);
+      });
+    });
+    
+    // Set up navigation for ALL links within page content
+    document.querySelectorAll('.page-container a').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const pageId = href.substring(1);
+          navigateTo(pageId);
+        });
+      }
+    });
+    
+    // Handle browser navigation (back/forward buttons)
+    window.addEventListener('hashchange', function() {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash) return;
+      
+      navigateTo(hash);
+    });
+    
+    // Initialize based on URL hash
+    window.addEventListener('load', function() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        navigateTo(hash);
+      }
+    });
+  <\/script>
+</body>
+</html>`;
+}
+}
+    // ----------------------------
+    // Replace openFullSiteInNewTab with this implementation
+    // ----------------------------
+    function openFullSiteInNewTab() {
+  if (!pageManager || Object.keys(pageManager.pages).length === 0) {
+    alert('No pages available to open.');
+    return;
   }
 
-  function setMode(m){
-    mode = m;
-    if (mode === 'prompt'){
-      modePromptBtn.classList.add('active'); modePromptBtn.setAttribute('aria-selected','true');
-      modeRawBtn.classList.remove('active'); modeRawBtn.setAttribute('aria-selected','false');
+  // Use the SPA generator that includes ALL pages
+  const fullSiteHtml = pageManager.generateFullSiteHtml();
+  if (!fullSiteHtml) {
+    alert('Failed to generate full site.');
+    return;
+  }
 
+  const blob = new Blob([fullSiteHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+
+  // Cleanup after 1 minute (safe for user interaction)
+  setTimeout(() => {
+    try { URL.revokeObjectURL(url); } catch (e) {}
+  }, 60000);
+}
+
+  // ======================
+  // UI Functions
+  // ======================
+  
+  function setMode(mode) {
+    currentMode = mode;
+    
+    if (mode === 'prompt') {
+      modePromptBtn.classList.add('active');
+      modePromptBtn.setAttribute('aria-selected', 'true');
+      modeRawBtn.classList.remove('active');
+      modeRawBtn.setAttribute('aria-selected', 'false');
+      
       promptEditor.classList.remove('hidden');
       htmlInput.classList.add('hidden');
-
+      
       promptEditor.focus();
     } else {
-      modeRawBtn.classList.add('active'); modeRawBtn.setAttribute('aria-selected','true');
-      modePromptBtn.classList.remove('active'); modePromptBtn.setAttribute('aria-selected','false');
-
+      modeRawBtn.classList.add('active');
+      modeRawBtn.setAttribute('aria-selected', 'true');
+      modePromptBtn.classList.remove('active');
+      modePromptBtn.setAttribute('aria-selected', 'false');
+      
       promptEditor.classList.add('hidden');
       htmlInput.classList.remove('hidden');
-
+      
       htmlInput.focus();
     }
   }
 
-  modePromptBtn.addEventListener('click', () => setMode('prompt'));
-  modeRawBtn.addEventListener('click', () => setMode('raw'));
+  function setGenerating(isGenerating) {
+    if (isGenerating) {
+      iframeWrap.classList.add('generating');
+      generateBtn.disabled = true;
+      downloadAllBtn.disabled = true;
+      openFullSiteBtn.disabled = true;
+      
+      // Set a white background to the iframe element while generation is in progress.
+      // This doesn't modify the generated page's elements — it's only the iframe element's background.
+      
 
-  // sample & clear behave on visible editor
-  const samplePrompt = `Create a sleek one-page landing for a developer tool called "OpenVibeCode". Include: header with logo and nav, hero with headline and CTA, features 3-column section, and a footer. Minimal animations, modern gradient, dark theme.`;
-  const sampleRawHtml = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sample</title></head><body style="font-family:Inter,system-ui,Arial;background:#071022;color:#eaf4ff;padding:36px;"><header><h1>OpenVibeCode — Sample</h1></header><main><p>This is a simple sample HTML block to preview.</p></main><footer style="margin-top:28px;font-size:14px;color:#9fb7d9">Generated sample</footer></body></html>`;
-
-  sampleBtn.addEventListener('click', () => {
-    if (mode === 'prompt') promptEditor.value = samplePrompt;
-    else htmlInput.value = sampleRawHtml;
-    if (mode === 'prompt') promptEditor.focus(); else htmlInput.focus();
-  });
-
-  clearBtn.addEventListener('click', () => {
-    if (mode === 'prompt') promptEditor.value = '';
-    else htmlInput.value = '';
-    if (mode === 'prompt') promptEditor.focus(); else htmlInput.focus();
-  });
-
-  // render HTML into iframe using htmlInput content
-  function renderHtmlIntoPreview(html){
-    if (!html) return;
-    revokeCurrent();
-    const blob = new Blob([html], {type:'text/html'});
-    const url = URL.createObjectURL(blob);
-    currentBlobUrl = url;
-    preview.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-scripts'); // adjust as needed
-    setTimeout(()=> preview.src = url, 50);
-  }
-
-  // main generate handler
-  async function generateHandler(){
-    if (mode === 'prompt'){
-      const prompt = promptEditor.value || '';
-      if (!prompt.trim()){ alert('Please enter a prompt to generate HTML'); return; }
-
-      setGenerating(true);
-      try {
-        const resp = await fetch('/generate', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ prompt: prompt, strip_scripts: false })
-        });
-        if (!resp.ok){
-          const err = await resp.json().catch(()=>({error:'server error'}));
-          throw new Error(err.error || resp.statusText);
-        }
-        const data = await resp.json();
-        const html = data.html || '';
-
-        // Put generated HTML into the Raw HTML editor (htmlInput) then render
-        htmlInput.value = html;
-        renderHtmlIntoPreview(html);
-
-        setGenerating(false);
-        promptEditor.focus();
-      } catch (err){
-        console.error(err);
-        alert('Generation failed: ' + (err.message || err));
-        setGenerating(false);
-        promptEditor.focus();
-      }
+      generateBtn.dataset.originalText = generateBtn.innerHTML;
+      generateBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>&nbsp;Generating…';
+      generateBtn.classList.remove('primary');
     } else {
-      // raw mode: render htmlInput directly
-      const html = htmlInput.value || '';
-      if (!html.trim()){ alert('Please paste raw HTML into the Raw HTML editor to render it.'); return; }
-      setGenerating(true);
-      try {
-        renderHtmlIntoPreview(html);
-        setTimeout(()=> setGenerating(false), 160);
-      } catch (err){
-        console.error(err);
-        alert('Failed to render: ' + (err.message || err));
-        setGenerating(false);
+      iframeWrap.classList.remove('generating');
+      generateBtn.disabled = false;
+      downloadAllBtn.disabled = false;
+      openFullSiteBtn.disabled = false;
+
+      // We keep the iframe element background in place — it will not change the generated page's own styling.
+      // If you prefer to clear it after load, you can set preview.style.backgroundColor = '' when appropriate.
+
+      generateBtn.innerHTML = generateBtn.dataset.originalText || 
+                             '<i class="fa fa-rocket"></i>&nbsp;Generate';
+      generateBtn.classList.add('primary');
+    }
+  }
+  
+
+  // ======================
+  // Feature Implementations
+  // ======================
+  
+  /**
+   * Download all pages as a ZIP file
+   */
+  function downloadAllPagesAsZip() {
+    if (!pageManager || Object.keys(pageManager.pages).length === 0) {
+      alert('No pages available to download.');
+      return;
+    }
+    
+    // Create a new JSZip instance
+    const zip = new JSZip();
+    
+    // Add each page to the ZIP
+    Object.entries(pageManager.pages).forEach(([filename, content]) => {
+      zip.file(filename, content);
+    });
+    
+    // Generate the ZIP file
+    zip.generateAsync({type: 'blob'}).then(function(content) {
+      // Trigger the download
+      saveAs(content, 'openvibecode-site.zip');
+    }).catch(function(error) {
+      console.error('Error creating ZIP:', error);
+      alert('Failed to create ZIP file: ' + error.message);
+    });
+  }
+
+  /**
+   * Open the full site in a new tab
+   * - Produces a single-file SPA that contains the body content of each generated page.
+   * - Cleans up any iframe-specific navigation scripts so the standalone site behaves normally.
+   * - Rewrites relative .html links inside page content to hash links so routing works in the SPA.
+   */
+  
+
+  // ======================
+  // Event Handlers
+  // ======================
+  
+  async function handleGenerate() {
+    setGenerating(true);
+    
+    try {
+      if (currentMode === 'prompt') {
+        const prompt = promptEditor.value.trim();
+        if (!prompt) {
+          alert('Please enter a prompt before generating.');
+          setGenerating(false);
+          return;
+        }
+        
+        // Call the backend API
+        const response = await fetch('/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            strip_scripts: false
+          })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Process the response
+        if (pageManager) pageManager.cleanup();
+        pageManager = new PageManager();
+        
+        // Extract pages from the response
+        const pages = pageManager.parseResponse(result.html);
+        const availablePages = pageManager.processPages(pages);
+        
+        // Load the first page
+        const firstPage = pageManager.getFirstPage();
+        if (firstPage) {
+          pageManager.loadPage(firstPage);
+        } else {
+          throw new Error("No valid pages found in response");
+        }
+      } else {
+        // Raw HTML mode - try to parse as pages
+        const rawContent = htmlInput.value.trim();
+        if (!rawContent) {
+          alert('Please enter HTML or JSON in the Raw HTML editor.');
+          setGenerating(false);
+          return;
+        }
+        
+        if (pageManager) pageManager.cleanup();
+        pageManager = new PageManager();
+        
+        // Try to parse as pages
+        const pages = pageManager.parseResponse(rawContent);
+        const availablePages = pageManager.processPages(pages);
+        
+        // Load the first page
+        const firstPage = pageManager.getFirstPage();
+        if (firstPage) {
+          pageManager.loadPage(firstPage);
+        } else {
+          throw new Error("No valid pages found in input");
+        }
       }
+      
+      setGenerating(false);
+    } catch (error) {
+      console.error('Generation error:', error);
+      alert(`Error: ${error.message || error}`);
+      setGenerating(false);
     }
   }
 
-  genBtn.addEventListener('click', generateHandler);
-
-  // keyboard shortcut: Ctrl/Cmd + Enter triggers generate no matter which editor is focused
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      e.preventDefault();
-      generateHandler();
+  function handleIframeMessage(event) {
+    const data = event.data || {};
+    
+    // Handle height updates
+    if (typeof data.height === 'number') {
+      preview.style.height = `${data.height}px`;
     }
-  });
+    
+    // Handle navigation requests
+    if (data.action === 'navigate' && data.url && pageManager) {
+      pageManager.loadPage(data.url);
+    }
+  }
 
-  // download / open: always use htmlInput content
-  downloadBtn.addEventListener('click', () => {
-    const html = htmlInput.value || '';
-    if (!html.trim()){ alert('Nothing to download — generate or paste HTML first.'); return; }
-    const blob = new Blob([html], {type:'text/html'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'vibe-generated.html';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=> URL.revokeObjectURL(url), 1500);
-  });
+  // ======================
+  // Initialization
+  // ======================
+  
+  function init() {
+    // Create page manager
+    pageManager = new PageManager();
+    
+    // Set up event listeners
+    modePromptBtn.addEventListener('click', () => setMode('prompt'));
+    modeRawBtn.addEventListener('click', () => setMode('raw'));
+    generateBtn.addEventListener('click', handleGenerate);
+    
+    // New feature buttons
+    downloadAllBtn.addEventListener('click', downloadAllPagesAsZip);
+    openFullSiteBtn.addEventListener('click', openFullSiteInNewTab);
+    
+    // Keyboard shortcut: Ctrl/Cmd + Enter
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleGenerate();
+      }
+    });
+    
+    // Sample button
+    sampleBtn.addEventListener('click', () => {
+      if (currentMode === 'prompt') {
+        promptEditor.value = `Create a sleek multi-page website for "OpenVibeCode" with home, features, and download pages. Include navigation between pages.`;
+        promptEditor.focus();
+      } else {
+        htmlInput.value = JSON.stringify({
+          "home.html": "<h1>Home Page</h1><p>Welcome to OpenVibeCode!</p><p><a href=\"features.html\">Go to Features</a></p>",
+          "features.html": "<h1>Features Page</h1><p>Discover our amazing features!</p><p><a href=\"download.html\">Go to Download</a></p>",
+          "download.html": "<h1>Download Page</h1><p>Get OpenVibeCode today!</p><p><a href=\"home.html\">Back to Home</a></p>"
+        }, null, 2);
+        htmlInput.focus();
+      }
+    });
+    
+    // Clear button
+    clearBtn.addEventListener('click', () => {
+      if (currentMode === 'prompt') {
+        promptEditor.value = '';
+        promptEditor.focus();
+      } else {
+        htmlInput.value = '';
+        htmlInput.focus();
+      }
+    });
+    
+    // Message listener for iframe communication
+    window.addEventListener('message', handleIframeMessage);
+    
+    // Initialize mode
+    setMode('prompt');
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (pageManager) pageManager.cleanup();
+    });
+  }
 
-  openNewBtn.addEventListener('click', () => {
-    if (currentBlobUrl) { window.open(currentBlobUrl, '_blank', 'noopener'); return; }
-    const html = htmlInput.value || '';
-    if (!html.trim()){ alert('No preview available yet.'); return; }
-    const url = URL.createObjectURL(new Blob([html], {type:'text/html'}));
-    window.open(url, '_blank', 'noopener');
-    setTimeout(()=> URL.revokeObjectURL(url), 2000);
-  });
-
-  // initialize
-  setMode('prompt');
-
+  // Start the app
+  document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
 </body>
 </html>
+
